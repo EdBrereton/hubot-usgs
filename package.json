@@ -6,9 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "hubot-scripts"
-  ],
+  "keywords": "hubot, hubot-scripts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/EdBrereton/hubot-usgs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EdBrereton/hhubot-usgs/issues"
+},
   "author": "Ed Brereton <edbrereton@gmail.com>",
   "license": "MIT"
 }
