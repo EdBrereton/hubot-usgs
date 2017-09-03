@@ -1,28 +1,36 @@
-//  Description
+//Description
 //    A Hubot script to pull data from the USGS API
 //    USGS API documentation can be found at 
 //    https://waterservices.usgs.gov/rest/IV-Service.html
 //  
-//  Dependencies:
+//Dependencies:
 //    None
 //  
-//  Configuration:
+//Configuration:
 //    None
 //  
-//  Commands:
+//Commands:
 //    usgs help - Display help in channel
 //    usgs alias <friendly name> <usgs sensor>" - Alias a sensor to friendly name
 //    usgs forget <friendly name>" - Forget an alias
 //    usgs list" - List current aliases
 //    usgs data <usgs sensor or alias>" - Get data from a sensor
 //  
-//  Author:
+//Author:
 //    Ed Brereton <edbrereton@gmail.com>
 //
 
-
-
 module.exports = function (robot) {
+    //Ensure we have some brain for usgs specific data
+    if (robot.brain.data.usgs == undefined) {
+        robot.brain.data.usgs = {};
+    }
+
+    if (robot.brain.data.usgs.alias == undefined) {
+        robot.brain.data.usgs.alias = {};
+    }
+
+    //Respond to a cry for help with a list of commands
     robot.respond("/usgs help/i", (res) => {
         res.send("usgs Commands");
         res.send("usgs alias <friendly name> <usgs sensor>");
@@ -31,55 +39,54 @@ module.exports = function (robot) {
         res.send("usgs data <usgs sensor or alias>");
     });
 
+    //Alias a sensor ID to a friendly name
     robot.respond("/usgs alias (.*) (.*)/i", (res) => {
         alias = res.match[1];
-        site = "usgs" + res.match[2];
+        site = res.match[2];
 
-        if(robot.brain.data[alias] != undefined) {
+        if (robot.brain.data.usgs.alias[alias] != undefined) {
             reply = "I already have an alias called " + alias;
         }
         else {
-            robot.brain.data[alias] = site;
-            reply = "aliased " + site.replace("usgs", "") + " to " + alias
+            robot.brain.data.usgs.alias[alias] = site;
+            reply = "aliased " + site + " to " + alias
         }
 
         res.send(reply);
     });
 
+    //List all current aliases
     robot.respond("/usgs list/i", (res) => {
         res.send("Known Aliases: ")
-        for (var key in robot.brain.data) {
-            if(key != "_private" 
-                && robot.brain.data[key] != undefined 
-                && typeof(robot.brain.data[key]) != "object"){
-                res.send(key + " is USGS site " + robot.brain.data[key]);
+        for (var key in robot.brain.data.usgs.alias) {
+            if (robot.brain.data.usgs.alias[key] != undefined) {
+                res.send(key + " is USGS site " + robot.brain.data.usgs.alias[key]);
             }
         }
     });
 
+    //Forget an alias
     robot.respond("/usgs forget (.*)/i", (res) => {
         alias = res.match[1];
 
         reply = ""
-        if(typeof(robot.brain.data[alias]) == "string"
-        && robot.brain.data[alias].substring(0,4) == "usgs") {
-            robot.brain.data[alias] = undefined;
+        if (robot.brain.data.usgs.alias[alias] != undefined) {
+            robot.brain.data.usgs.alias[alias] = undefined;
             reply = "Alias " + alias + " has been forgotten"
         }
         else {
             reply = "I can't forget that"
         }
-   
+
         res.send(reply);
     });
 
+    //Get data from a given sensor
     robot.respond("/usgs data (.*)/i", (res) => {
         input = res.match[1];
 
-        if (robot.brain.data[input] != undefined
-        && typeof(robot.brain.data[alias]) == "string"
-        && robot.brain.data[alias].substring(0,4) == "usgs") {
-            site = robot.brain.data[input].replace("usgs", "");
+        if (robot.brain.data.usgs.alias[input] != undefined) {
+            site = robot.brain.data.usgs.alias[input];
         }
         else {
             site = input;
@@ -95,23 +102,23 @@ module.exports = function (robot) {
                     res.send("Something went wrong - did you use a missing alias?")
                     return;
                 }
-                
+
 
                 res.send(data.value.timeSeries[0].sourceInfo.siteName)
                 for (var i = 0; i < data.value.timeSeries.length; i++) {
-                    res.send(data.value.timeSeries[i].values[0].value[0].dateTime + " - " 
-                    + data.value.timeSeries[i].variable.variableName + ", " +
-					+ data.value.timeSeries[i].values[0].value[0].value
-					+ data.value.timeSeries[i].variable.unit.unitCode);
-				}
-				
-				res.send("Source: https://waterdata.usgs.gov/tx/nwis/uv/?site_no="+site)
+                    res.send(data.value.timeSeries[i].values[0].value[0].dateTime + " - "
+                        + data.value.timeSeries[i].variable.variableName + ", " +
+                        + data.value.timeSeries[i].values[0].value[0].value
+                        + data.value.timeSeries[i].variable.unit.unitCode);
+                }
 
-				lat = data.value.timeSeries[0].sourceInfo.geoLocation.geogLocation.latitude;
-				long = data.value.timeSeries[0].sourceInfo.geoLocation.geogLocation.longitude;
-				res.send("Location: https://www.google.com/maps/place/"+lat+","+long)
+                res.send("Source: https://waterdata.usgs.gov/tx/nwis/uv/?site_no=" + site)
 
-                
+                lat = data.value.timeSeries[0].sourceInfo.geoLocation.geogLocation.latitude;
+                long = data.value.timeSeries[0].sourceInfo.geoLocation.geogLocation.longitude;
+                res.send("Location: https://www.google.com/maps/place/" + lat + "," + long)
+
+
             });
     });
 }
