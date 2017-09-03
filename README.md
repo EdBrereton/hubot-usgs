@@ -21,7 +21,7 @@ Then add **hubot-usgs** to your `external-scripts.json`:
 ## Sample Interaction
 
 ```
-User> usgs alias barker 08072500 
+User> Hubot: usgs alias barker 08072500 
 Hubot> aliased 08072500 to barker 
 User> Hubot: usgs data barker 
 Hubot>

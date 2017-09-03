@@ -1,18 +1,18 @@
 {
   "name": "hubot-usgs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A hubot script to query the USGS Sensor API and return data to the chat ",
   "main": "index.coffee",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": "hubot, hubot-scripts",
+  "keywords": "hubot, hubot-scripts, usgs",
   "repository": {
     "type": "git",
     "url": "git://github.com/EdBrereton/hubot-usgs.git"
   },
   "bugs": {
-    "url": "https://github.com/EdBrereton/hhubot-usgs/issues"
+    "url": "https://github.com/EdBrereton/hubot-usgs/issues"
 },
   "author": "Ed Brereton <edbrereton@gmail.com>",
   "license": "MIT"

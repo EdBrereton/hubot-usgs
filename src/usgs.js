@@ -73,8 +73,7 @@ module.exports = function (robot) {
         if (robot.brain.data.usgs.alias[alias] != undefined) {
             robot.brain.data.usgs.alias[alias] = undefined;
             reply = "Alias " + alias + " has been forgotten"
-        }
-        else {
+        } else {
             reply = "I can't forget that"
         }
 
