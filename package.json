@@ -1,6 +1,6 @@
 {
   "name": "hubot-usgs",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A hubot script to query the USGS Sensor API and return data to the chat ",
   "main": "index.coffee",
   "scripts": {
